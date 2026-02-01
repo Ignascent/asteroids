@@ -13,10 +13,15 @@ def main():
     clock = pygame.time.Clock()
     player = Player(x = SCREEN_WIDTH / 2, y = SCREEN_HEIGHT / 2)
     while True:
-        #log_state()
+        log_state()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_ESCAPE]:
+            return
+        
         screen.fill("black")
         player.update(dt)
         player.draw(screen)
