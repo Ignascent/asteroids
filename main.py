@@ -1,6 +1,7 @@
 import pygame
+import sys
 from constants import *
-from logger import log_state 
+from logger import log_state, log_event 
 from player import *
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
@@ -35,6 +36,11 @@ def main():
         updatable.update(dt)
         for sprite in drawable:
             sprite.draw(screen)
+        for asteroid in asteroids:
+            if asteroid.collides_with(player):
+                log_event("player_hit")
+                print("Game over!")
+                sys.exit()    
         pygame.display.flip()
         dt = clock.tick(60)/1000
         if dt > MAX_DT:
