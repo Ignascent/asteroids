@@ -4,6 +4,7 @@ from shot import Shot
 
 class Player(CircleShape):
     #containers = ()
+    cooldown = 0
 
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
@@ -42,9 +43,13 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
         if keys[pygame.K_SPACE]:
-            self.shoot()   
+            self.shoot()    
+        self.cooldown -= dt   
     
     def shoot(self): 
-        tip = self.position + pygame.Vector2(0, 1).rotate(self.rotation) * self.radius
-        pew = Shot(tip.x, tip.y)
-        pew.velocity = PLAYER_SHOOT_SPEED * pygame.Vector2(0,1).rotate(self.rotation)
+        if self.cooldown <= 0:
+            tip = self.position + pygame.Vector2(0, 1).rotate(self.rotation) * self.radius
+            pew = Shot(tip.x, tip.y)
+            pew.velocity = PLAYER_SHOOT_SPEED * pygame.Vector2(0,1).rotate(self.rotation)
+            self.cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
+        pass
