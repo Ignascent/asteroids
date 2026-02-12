@@ -1,7 +1,25 @@
 import inspect
 import json
 import math
+import sys
 from datetime import datetime
+from pathlib import Path
+
+# -------- NEW: figure out a good base dir and logs dir --------
+def _get_base_dir() -> Path:
+    # When frozen by PyInstaller
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).parent
+    # When running from source
+    return Path(__file__).parent
+
+_BASE_DIR = _get_base_dir()
+_LOGS_DIR = _BASE_DIR / "logs"
+_LOGS_DIR.mkdir(exist_ok=True)
+
+_STATE_LOG_PATH = _LOGS_DIR / "game_state.jsonl"
+_EVENT_LOG_PATH = _LOGS_DIR / "game_events.jsonl"
+# ---------------------------------------------------------------
 
 __all__ = ["log_state", "log_event"]
 
@@ -109,7 +127,7 @@ def log_state():
 
     # New log file on each run
     mode = "w" if not _state_log_initialized else "a"
-    with open("game_state.jsonl", mode) as f:
+    with open(_STATE_LOG_PATH, mode) as f:
         f.write(json.dumps(entry) + "\n")
 
     _state_log_initialized = True
@@ -129,7 +147,7 @@ def log_event(event_type, **details):
     }
 
     mode = "w" if not _event_log_initialized else "a"
-    with open("game_events.jsonl", mode) as f:
+    with open(_EVENT_LOG_PATH, mode) as f:
         f.write(json.dumps(event) + "\n")
 
     _event_log_initialized = True
